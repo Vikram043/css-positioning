@@ -3,286 +3,113 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CSS Positioning — Interactive Game & Notes</title>
+  <title>CSS Positioning — Simple Demo</title>
   <style>
-    :root{--bg:#0f172a;--card:#0b1220;--accent:#7dd3fc;--muted:#9aa8bf}
-    body{font-family:Inter,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;margin:0;background:linear-gradient(180deg,#071029,#071b2a);color:#e6f0fb}
-    .wrap{max-width:980px;margin:36px auto;padding:20px}
-    header{display:flex;align-items:center;justify-content:space-between}
-    h1{font-size:20px;margin:0}
-    p.lead{margin:6px 0 18px;color:var(--muted)}
-
-    .layout{display:grid;grid-template-columns:1fr 360px;gap:18px}
-
-    /* GAME CARD */
-    .card{background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));padding:16px;border-radius:12px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
-
-    .play-area{height:360px;border-radius:8px;background:linear-gradient(180deg,#041326,#052233);position:relative;overflow:hidden;border:1px solid rgba(255,255,255,0.03)}
-
-    .target{width:120px;height:80px;background:linear-gradient(180deg,#2b6b8a,#1f4960);color:white;display:flex;align-items:center;justify-content:center;border-radius:8px;}
-
-    /* default position for target in the play area */
-    .target.wrap{position:static}
-
-    .controls{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
-    select,input[type=range]{padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:transparent;color:inherit}
-    button{background:var(--accent);color:#012;border:none;padding:8px 10px;border-radius:8px;cursor:pointer}
-
-    /* RIGHT SIDE NOTES */
-    .notes{display:flex;flex-direction:column;gap:12px}
-    .note{padding:12px;border-radius:8px;background:rgba(255,255,255,0.02);border:1px solid rgba(255,255,255,0.03)}
-    .note h3{margin:0 0 8px 0;font-size:14px}
-    .hint{display:none;color:var(--muted);font-size:13px}
-    .syntax{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace;background:rgba(0,0,0,0.2);padding:8px;border-radius:6px;font-size:13px}
-
-    /* feedback */
-    .feedback{margin-top:10px;padding:10px;border-radius:8px;background:rgba(0,0,0,0.25);color:#dff5ff}
-
-    /* small quiz */
-    .quiz button{background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px;border-radius:8px;color:inherit;cursor:pointer}
-
-    /* show example code area */
-    pre{background:rgba(0,0,0,0.25);padding:12px;border-radius:8px;overflow:auto;font-size:13px}
-
-    /* responsive */
-    @media (max-width:880px){.layout{grid-template-columns:1fr}.notes{order:2}.card{margin-bottom:12px}}
+    body {font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f3f4f6;}
+    h1 {font-size: 20px;}
+    .play-area {width: 100%; height: 300px; border: 2px dashed #ccc; margin-bottom: 16px; position: relative; background: white; overflow: auto;}
+    .target {width: 100px; height: 60px; background: #3b82f6; color: white; display: flex; align-items: center; justify-content: center; border-radius: 6px; position: static;}
+    .controls {margin-top: 12px; display: flex; flex-wrap: wrap; gap: 12px;}
+    select, input[type=range], button {padding: 6px 8px; font-size: 14px;}
+    .feedback {margin-top: 12px; padding: 10px; background: #e0f2fe; border-radius: 6px;}
+    .hint {margin-top: 8px; background: #fef3c7; padding: 8px; border-radius: 6px; display: none; white-space: pre-line;}
+    /* Scroll demo area */
+    .scroll-demo {margin-top: 40px; height: 200px; overflow-y: scroll; border: 2px solid #ddd; background: #fff; padding: 0 10px;}
+    .scroll-content {height: 600px; padding-top: 40px;}
+    .fixed-box {position: fixed; top: 0; right: 0; background: #f43f5e; color: white; padding: 6px 10px; border-radius: 4px;}
+    .sticky-box {position: sticky; top: 0; background: #10b981; color: white; padding: 6px 10px; border-radius: 4px;}
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <header>
-      <div>
-        <h1>CSS Positioning — Interactive Game & Notes</h1>
-        <p class="lead">Practice positioning (static, relative, absolute, fixed, sticky) with instant feedback. Click "Hint" to reveal two-line syntax notes and an example.</p>
-      </div>
-      <div style="text-align:right;color:var(--muted);font-size:13px">For student-developer <strong>vikram</strong></div>
-    </header>
+  <h1>CSS Positioning — Simple Visualizer</h1>
+  <p>Choose a position type and move the blue TARGET box using sliders. This will help you visualize how <code>static</code>, <code>relative</code>, <code>absolute</code>, and <code>fixed</code> behave.</p>
 
-    <div class="layout">
-      <div>
-        <section class="card">
-          <h2 style="font-size:16px;margin:0 0 12px 0">Play Area</h2>
-          <div class="play-area" id="playArea">
-            <!-- container that can be positioned relative to allow absolute child positioning -->
-            <div id="boxContainer" style="position:relative;width:100%;height:100%;">
-              <div id="target" class="target" style="position:static;top:auto;left:auto;right:auto;bottom:auto;">TARGET</div>
-            </div>
+  <div class="play-area" id="playArea">
+    <div id="target" class="target">TARGET</div>
+  </div>
 
-            <!-- visual ruler for sticky demo -->
-            <div id="stickyMarker" style="position:absolute;left:0;right:0;top:140px;height:2px;background:rgba(255,255,255,0.03)"></div>
-          </div>
+  <div class="controls">
+    <label>
+      Position:
+      <select id="positionSelect">
+        <option value="static">static</option>
+        <option value="relative">relative</option>
+        <option value="absolute">absolute</option>
+        <option value="fixed">fixed</option>
+        <option value="sticky">sticky</option>
+      </select>
+    </label>
 
-          <div class="controls">
-            <label style="display:flex;align-items:center;gap:8px;color:var(--muted)">
-              Position:
-              <select id="positionSelect">
-                <option value="static">static</option>
-                <option value="relative">relative</option>
-                <option value="absolute">absolute</option>
-                <option value="fixed">fixed</option>
-                <option value="sticky">sticky</option>
-              </select>
-            </label>
+    <label>
+      top
+      <input id="topRange" type="range" min="-100" max="200" value="0">
+    </label>
 
-            <label style="display:flex;align-items:center;gap:8px;color:var(--muted)">
-              top
-              <input id="topRange" type="range" min="-200" max="400" value="0">
-            </label>
+    <label>
+      left
+      <input id="leftRange" type="range" min="-100" max="200" value="0">
+    </label>
 
-            <label style="display:flex;align-items:center;gap:8px;color:var(--muted)">
-              left
-              <input id="leftRange" type="range" min="-200" max="400" value="0">
-            </label>
+    <button id="applyBtn">Apply</button>
+    <button id="resetBtn">Reset</button>
+    <button id="hintBtn">Show Notes</button>
+  </div>
 
-            <button id="applyBtn">Apply</button>
-            <button id="resetBtn" style="background:#fca5a5">Reset</button>
-            <button id="hintBtn" style="background:transparent;border:1px solid rgba(255,255,255,0.06)">Hint</button>
-            <button id="showCodeBtn">Show Example</button>
-          </div>
+  <div class="feedback" id="feedback">Choose a position and click Apply.</div>
+  <div class="hint" id="hintText"></div>
 
-          <div class="feedback" id="feedback">Choose a position and click Apply. Try to place the TARGET at top-right using <code>absolute</code> (hint available).</div>
-
-          <hr style="margin:12px 0;border:none;border-top:1px solid rgba(255,255,255,0.03)">
-
-          <div class="quiz">
-            <h3 style="margin:0 0 8px 0">Quick Quiz</h3>
-            <p style="margin:6px 0;color:var(--muted)">Which positioning is removed from normal flow?</p>
-            <div style="display:flex;gap:8px">
-              <button data-answer="static">static</button>
-              <button data-answer="relative">relative</button>
-              <button data-answer="absolute">absolute</button>
-              <button data-answer="sticky">sticky</button>
-            </div>
-            <div id="quizFeedback" style="margin-top:8px;color:var(--muted)"></div>
-          </div>
-
-        </section>
-
-        <section class="card" style="margin-top:14px">
-          <h2 style="font-size:16px;margin:0 0 10px 0">Level Ideas (expandable)</h2>
-          <ul style="margin:8px 0 0 18px;color:var(--muted)">
-            <li>Level 1: Place the target in the corner using <code>absolute</code> inside a positioned parent.</li>
-            <li>Level 2: Create a sticky header demo — scroll and watch it stick.</li>
-            <li>Level 3: z-index puzzle — bring one box above another.</li>
-            <li>Level 4: Fixed footer that stays on screen while scrolling long content.</li>
-          </ul>
-        </section>
-      </div>
-
-      <aside class="notes">
-        <div class="note">
-          <h3>Hint & Two-line Syntax</h3>
-          <div style="display:flex;gap:8px;align-items:center;justify-content:space-between">
-            <div style="flex:1">
-              <p style="margin:0;color:var(--muted)">Click <strong>Hint</strong> to toggle a short note for the currently selected position value.</p>
-            </div>
-          </div>
-          <div class="hint" id="hintText">(hidden)</div>
-        </div>
-
-        <div class="note">
-          <h3>Example Code</h3>
-          <pre id="exampleCode">/* click Show Example to view a minimal example */</pre>
-          <button id="copyBtn" style="margin-top:8px;">Copy Example</button>
-        </div>
-
-        <div class="note">
-          <h3>z-index Quick Tip</h3>
-          <p style="margin:0;color:var(--muted)">z-index only works on positioned elements (position not static). Use higher integer for front.</p>
-        </div>
-
-      </aside>
+  <!-- Scroll demo section -->
+  <h2>Scroll Demo: Fixed vs Sticky</h2>
+  <p>Scroll inside the box below to see how <b>fixed</b> and <b>sticky</b> behave differently.</p>
+  <div class="scroll-demo">
+    <div class="fixed-box">I am FIXED (always on screen)</div>
+    <div class="sticky-box">I am STICKY (stick when reaching top)</div>
+    <div class="scroll-content">
+      <p>Keep scrolling... notice the red FIXED box stays at the viewport corner.</p>
+      <p>The green STICKY box scrolls with content until it reaches the top, then it sticks.</p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec feugiat mauris sed tellus blandit, eu bibendum ex euismod.</p>
+      <p>Sed mattis libero vel lectus gravida, a tristique dolor iaculis.</p>
+      <p>Vivamus ultricies nisl ac lorem tincidunt, vel facilisis orci tincidunt.</p>
+      <p>Phasellus luctus, lacus a ullamcorper suscipit, dui odio accumsan mi, vel tincidunt elit nulla non metus.</p>
     </div>
   </div>
 
   <script>
-    // Elements
+    const target = document.getElementById('target');
     const positionSelect = document.getElementById('positionSelect');
     const topRange = document.getElementById('topRange');
     const leftRange = document.getElementById('leftRange');
-    const applyBtn = document.getElementById('applyBtn');
-    const resetBtn = document.getElementById('resetBtn');
-    const hintBtn = document.getElementById('hintBtn');
-    const hintText = document.getElementById('hintText');
-    const target = document.getElementById('target');
-    const exampleCode = document.getElementById('exampleCode');
-    const showCodeBtn = document.getElementById('showCodeBtn');
     const feedback = document.getElementById('feedback');
+    const hintText = document.getElementById('hintText');
 
-    const quizBtnEls = document.querySelectorAll('.quiz button');
-    const quizFeedback = document.getElementById('quizFeedback');
-
-    // Two-line notes for each position type
     const notes = {
-      static: ['position: static; — default; top/right/bottom/left ignored.', 'Use when you want normal flow.'],
-      relative: ['position: relative; — moves relative to original spot; keeps space.', 'Good for subtle shifts and as anchor for absolute children.'],
-      absolute: ['position: absolute; — removed from flow; positioned against nearest positioned ancestor.', 'Set ancestor to position: relative; to control the reference.'],
-      fixed: ['position: fixed; — fixed to viewport; does not move on scroll.', 'Great for navbars and floating controls.'],
-      sticky: ['position: sticky; — acts relative until threshold then becomes fixed.', 'Requires a threshold (e.g., top:0) and a scrollable container.']
+      static: `Static\nSyntax: position: static;\nUse Case: Default flow, no manual positioning.\nExample: <div style=\"position: static;\">Box</div>` ,
+      relative: `Relative\nSyntax: position: relative; top:10px; left:20px;\nUse Case: Small nudges from original spot.\nExample: <div style=\"position: relative; top:10px;\">Box</div>` ,
+      absolute: `Absolute\nSyntax: position: absolute; top:10px; right:20px;\nUse Case: Place element relative to ancestor.\nExample: <div style=\"position: absolute; top:10px;\">Box</div>` ,
+      fixed: `Fixed\nSyntax: position: fixed; bottom:0; left:0;\nUse Case: Navbars, footers always visible.\nExample: <div style=\"position: fixed; bottom:0;\">Box</div>` ,
+      sticky: `Sticky\nSyntax: position: sticky; top:0;\nUse Case: Headers that stick while scrolling.\nExample: <div style=\"position: sticky; top:0;\">Header</div>`
     };
 
-    // When Hint toggles, show the two-line note for selected position
-    hintBtn.addEventListener('click',() => {
+    document.getElementById('applyBtn').addEventListener('click', () => {
       const pos = positionSelect.value;
-      hintText.style.display = hintText.style.display === 'block' ? 'none' : 'block';
-      hintText.innerHTML = `<div class="syntax">${notes[pos][0]}</div><div style="height:6px"></div><div class="syntax">${notes[pos][1]}</div>`;
-    });
-
-    // Show example code for the currently selected position
-    showCodeBtn.addEventListener('click', () => {
-      const pos = positionSelect.value;
-      let code = '';
-      if(pos === 'static'){
-        code = `/* static — default */\n.target {\n  position: static; /* top/right ignored */\n}`;
-      } else if(pos === 'relative'){
-        code = `/* relative — moves but keeps space */\n.container { position: static; }\n.target {\n  position: relative;\n  top: 20px;\n  left: 30px;\n}`;
-      } else if(pos === 'absolute'){
-        code = `/* absolute — removed from flow, position relative to nearest positioned ancestor */\n.container { position: relative; }\n.target {\n  position: absolute;\n  top: 10px;\n  right: 10px;\n}`;
-      } else if(pos === 'fixed'){
-        code = `/* fixed — stuck to the viewport */\n.target {\n  position: fixed;\n  bottom: 0;\n  left: 0;\n  width: 100%;\n}`;
-      } else if(pos === 'sticky'){
-        code = `/* sticky — acts relative until threshold then becomes fixed */\n.header {\n  position: sticky;\n  top: 0;\n  background: white;\n}`;
-      }
-      exampleCode.textContent = code;
-    });
-
-    // Copy example
-    document.getElementById('copyBtn').addEventListener('click', async () => {
-      try{ await navigator.clipboard.writeText(exampleCode.textContent); alert('Example copied to clipboard'); }
-      catch(e){ alert('Copy failed — select and copy manually'); }
-    });
-
-    // Apply position to target with top/left values
-    applyBtn.addEventListener('click', () => {
-      const pos = positionSelect.value;
-      const top = topRange.value + 'px';
-      const left = leftRange.value + 'px';
-
-      // Reset styles first
       target.style.position = pos;
-      target.style.top = '';
-      target.style.left = '';
-      target.style.right = '';
-      target.style.bottom = '';
-      target.style.transform = '';
-
-      // For fixed, we position relative to viewport (body), so append to document.body
-      if(pos === 'fixed'){
-        document.getElementById('boxContainer').appendChild(target);
-        target.style.top = top;
-        target.style.left = left;
-      } else if(pos === 'absolute'){
-        // ensure container is positioned
-        document.getElementById('boxContainer').style.position = 'relative';
-        target.style.position = 'absolute';
-        target.style.top = top;
-        target.style.left = left;
-      } else if(pos === 'relative'){
-        target.style.top = top;
-        target.style.left = left;
-      } else if(pos === 'sticky'){
-        // for sticky to work, element must be in normal flow and container scrollable
-        target.style.position = 'sticky';
-        target.style.top = top; // top acts as threshold
-        feedback.textContent = 'Note: To fully observe sticky -> scroll the page (try adding more content or shrink the viewport).';
-      } else { // static
-        target.style.position = 'static';
-      }
-
-      // give feedback about whether the box is near top-right
-      setTimeout(()=>{
-        const rect = target.getBoundingClientRect();
-        const paRect = document.getElementById('playArea').getBoundingClientRect();
-        const distRight = Math.abs((paRect.right - rect.right));
-        const distTop = Math.abs((rect.top - paRect.top));
-        if(positionSelect.value === 'absolute' && distRight < 30 && distTop < 30){
-          feedback.textContent = 'Great! You placed the target near the top-right using absolute positioning.';
-        }
-      },80);
+      target.style.top = topRange.value + 'px';
+      target.style.left = leftRange.value + 'px';
+      feedback.textContent = `Applied position: ${pos}`;
     });
 
-    resetBtn.addEventListener('click', ()=>{
-      const c = document.getElementById('boxContainer');
-      c.style.position = 'relative';
+    document.getElementById('resetBtn').addEventListener('click', () => {
       target.style.position = 'static';
       target.style.top = '';
       target.style.left = '';
-      feedback.textContent = 'Reset to default. Choose a position and click Apply.';
+      feedback.textContent = 'Reset to default (static).';
     });
 
-    // Quiz logic
-    quizBtnEls.forEach(btn => btn.addEventListener('click', ()=>{
-      const ans = btn.dataset.answer;
-      if(ans === 'absolute'){
-        quizFeedback.textContent = 'Correct — absolute positioning removes an element from normal flow.';
-      } else {
-        quizFeedback.textContent = 'Not quite. Try again or click Hint to review position behavior.';
-      }
-    }));
-
-    // Initialize example content
-    exampleCode.textContent = 'Select a position and click Show Example to see a minimal code snippet.';
-
+    document.getElementById('hintBtn').addEventListener('click', () => {
+      const pos = positionSelect.value;
+      hintText.style.display = hintText.style.display === 'block' ? 'none' : 'block';
+      hintText.textContent = notes[pos];
+    });
   </script>
 </body>
 </html>

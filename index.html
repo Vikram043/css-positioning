@@ -1,115 +1,257 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CSS Positioning — Simple Demo</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CSS Positioning Playground v4</title>
   <style>
-    body {font-family: Arial, sans-serif; margin: 0; padding: 20px; background: #f3f4f6;}
-    h1 {font-size: 20px;}
-    .play-area {width: 100%; height: 300px; border: 2px dashed #ccc; margin-bottom: 16px; position: relative; background: white; overflow: auto;}
-    .target {width: 100px; height: 60px; background: #3b82f6; color: white; display: flex; align-items: center; justify-content: center; border-radius: 6px; position: static;}
-    .controls {margin-top: 12px; display: flex; flex-wrap: wrap; gap: 12px;}
-    select, input[type=range], button {padding: 6px 8px; font-size: 14px;}
-    .feedback {margin-top: 12px; padding: 10px; background: #e0f2fe; border-radius: 6px;}
-    .hint {margin-top: 8px; background: #fef3c7; padding: 8px; border-radius: 6px; display: none; white-space: pre-line;}
-    /* Scroll demo area */
-    .scroll-demo {margin-top: 40px; height: 200px; overflow-y: scroll; border: 2px solid #ddd; background: #fff; padding: 0 10px;}
-    .scroll-content {height: 600px; padding-top: 40px;}
-    .fixed-box {position: fixed; top: 0; right: 0; background: #f43f5e; color: white; padding: 6px 10px; border-radius: 4px;}
-    .sticky-box {position: sticky; top: 0; background: #10b981; color: white; padding: 6px 10px; border-radius: 4px;}
+    /* Global Styles & Fonts */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      height: 100vh;
+      background-color: #f0f2f5; /* Light gray background */
+      color: #333; /* Darker text for readability */
+    }
+
+    /* Panels Layout & Styling */
+    .notes-panel {
+      width: 40%;
+      background: #1a1a2e; /* Darker background for contrast */
+      color: #e0e0e0; /* Lighter text for the dark panel */
+      padding: 20px;
+      overflow-y: auto;
+      box-sizing: border-box;
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    }
+
+    .notes-panel h2 {
+        color: #64ffda; /* A highlight color for the heading */
+    }
+
+    .playground {
+      width: 60%;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      box-sizing: border-box;
+      background: #ffffff; /* White background for the playground */
+    }
+
+    /* Controls Styling */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px; /* Increased gap for better spacing */
+      margin-bottom: 20px; /* More space below controls */
+    }
+
+    .controls button, .controls input {
+      padding: 10px 15px; /* Bigger buttons */
+      border: none;
+      border-radius: 8px; /* Softer rounded corners */
+      cursor: pointer;
+      font-weight: 600; /* Slightly bolder font */
+      transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth hover effects */
+    }
+
+    .controls button {
+      background-color: #4CAF50; /* Green button */
+      color: white;
+    }
+
+    .controls button:hover {
+      background-color: #45a049; /* Darker green on hover */
+      transform: translateY(-2px); /* Slight lift effect */
+    }
+
+    .controls input {
+      padding: 8px; /* Adjusted padding for inputs */
+      width: 80px; /* Slightly wider input boxes */
+      border: 1px solid #ccc; /* A subtle border */
+      border-radius: 6px;
+    }
+
+    /* Demo Area Styling */
+    .area, .parent-container, .scroll-area {
+      flex: 1;
+      border: 1px solid #ddd; /* Lighter, more modern border */
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden; /* Hide anything that overflows */
+      padding: 20px;
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05); /* Subtle inner shadow */
+    }
+    
+    .scroll-area {
+        overflow-y: auto; /* Re-enabled for scrolling */
+        height: 300px;
+    }
+
+    /* Demo Boxes Styling */
+    .demo-box {
+      width: 120px; /* Slightly larger boxes */
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-weight: bold;
+      border-radius: 10px; /* Rounded corners for the boxes */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Drop shadow for depth */
+      transition: transform 0.3s ease; /* Smooth transition for movements */
+    }
+
+    .demo-box:hover {
+        transform: scale(1.05); /* Slight zoom on hover */
+    }
+
+    .static { background: #607d8b; } /* Slate gray */
+    .relative { background: #ff9800; } /* Amber */
+    .absolute { background: #9c27b0; } /* Deep purple */
+    .fixed { background: #f44336; } /* Red */
+    .sticky { background: #03a9f4; color: white; } /* Light blue */
+    .absolute-parent { background: #8bc34a; } /* Light green */
+
+    .placeholder {
+      border: 2px dashed #999;
+      background-color: rgba(255, 255, 255, 0.5);
+      border-radius: 10px;
+    }
+
+    .small-content, .big-content {
+      /* Added to support the sticky demo, but with some style */
+      background: #f8f8f8;
+      border-radius: 5px;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px dashed #ccc;
+    }
+    
+    .big-content {
+        height: 800px; /* Reduced to 800px for a better demo */
+    }
+
+    .parent-container {
+      position: relative;
+      border: 2px solid #ccc;
+      height: 250px; /* Increased height for better visibility */
+      margin-top: 20px;
+      background: #e9e9f1;
+    }
+    
   </style>
 </head>
 <body>
-  <h1>CSS Positioning — Simple Visualizer</h1>
-  <p>Choose a position type and move the blue TARGET box using sliders. This will help you visualize how <code>static</code>, <code>relative</code>, <code>absolute</code>, and <code>fixed</code> behave.</p>
-
-  <div class="play-area" id="playArea">
-    <div id="target" class="target">TARGET</div>
+  <div class="notes-panel" id="notes">
+    <h2>CSS Positioning Notes</h2>
+    <p>Select a mode to see details here.</p>
   </div>
 
-  <div class="controls">
-    <label>
-      Position:
-      <select id="positionSelect">
-        <option value="static">static</option>
-        <option value="relative">relative</option>
-        <option value="absolute">absolute</option>
-        <option value="fixed">fixed</option>
-        <option value="sticky">sticky</option>
-      </select>
-    </label>
-
-    <label>
-      top
-      <input id="topRange" type="range" min="-100" max="200" value="0">
-    </label>
-
-    <label>
-      left
-      <input id="leftRange" type="range" min="-100" max="200" value="0">
-    </label>
-
-    <button id="applyBtn">Apply</button>
-    <button id="resetBtn">Reset</button>
-    <button id="hintBtn">Show Notes</button>
-  </div>
-
-  <div class="feedback" id="feedback">Choose a position and click Apply.</div>
-  <div class="hint" id="hintText"></div>
-
-  <!-- Scroll demo section -->
-  <h2>Scroll Demo: Fixed vs Sticky</h2>
-  <p>Scroll inside the box below to see how <b>fixed</b> and <b>sticky</b> behave differently.</p>
-  <div class="scroll-demo">
-    <div class="fixed-box">I am FIXED (always on screen)</div>
-    <div class="sticky-box">I am STICKY (stick when reaching top)</div>
-    <div class="scroll-content">
-      <p>Keep scrolling... notice the red FIXED box stays at the viewport corner.</p>
-      <p>The green STICKY box scrolls with content until it reaches the top, then it sticks.</p>
-      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec feugiat mauris sed tellus blandit, eu bibendum ex euismod.</p>
-      <p>Sed mattis libero vel lectus gravida, a tristique dolor iaculis.</p>
-      <p>Vivamus ultricies nisl ac lorem tincidunt, vel facilisis orci tincidunt.</p>
-      <p>Phasellus luctus, lacus a ullamcorper suscipit, dui odio accumsan mi, vel tincidunt elit nulla non metus.</p>
+  <div class="playground">
+    <div class="controls">
+      <button onclick="setMode('static')">Static</button>
+      <button onclick="setMode('relative')">Relative</button>
+      <button onclick="setMode('absolute')">Absolute</button>
+      <button onclick="setMode('absoluteParent')">Absolute with Parent</button>
+      <button onclick="setMode('fixed')">Fixed</button>
+      <button onclick="setMode('sticky')">Sticky</button>
+      <label>Top: <input type="text" id="topVal" value="0px"></label>
+      <label>Left: <input type="text" id="leftVal" value="0px"></label>
+      <button onclick="applyOffsets()">Apply</button>
+    </div>
+    <div class="area" id="playArea">
+      <div class="demo-box static" id="demoBox">Box</div>
+      <div class="placeholder" id="placeholder" style="display:none;"></div>
+    </div>
+    <div class="scroll-area" id="stickyArea" style="display:none;">
+      <div class="small-content">Scroll down to see the sticky box in action!</div>
+      <div class="demo-box sticky" id="stickyBox">Sticky</div>
+      <div class="big-content"></div>
+    </div>
+    <div class="parent-container" id="parentArea" style="display:none;">
+      <div class="demo-box absolute-parent" id="childBox">Child</div>
     </div>
   </div>
 
   <script>
-    const target = document.getElementById('target');
-    const positionSelect = document.getElementById('positionSelect');
-    const topRange = document.getElementById('topRange');
-    const leftRange = document.getElementById('leftRange');
-    const feedback = document.getElementById('feedback');
-    const hintText = document.getElementById('hintText');
+    let currentMode = 'static';
+    const demoBox = document.getElementById('demoBox');
+    const placeholder = document.getElementById('placeholder');
+    const stickyArea = document.getElementById('stickyArea');
+    const stickyBox = document.getElementById('stickyBox');
+    const parentArea = document.getElementById('parentArea');
+    const childBox = document.getElementById('childBox');
+    const notes = document.getElementById('notes');
 
-    const notes = {
-      static: `Static\nSyntax: position: static;\nUse Case: Default flow, no manual positioning.\nExample: <div style=\"position: static;\">Box</div>` ,
-      relative: `Relative\nSyntax: position: relative; top:10px; left:20px;\nUse Case: Small nudges from original spot.\nExample: <div style=\"position: relative; top:10px;\">Box</div>` ,
-      absolute: `Absolute\nSyntax: position: absolute; top:10px; right:20px;\nUse Case: Place element relative to ancestor.\nExample: <div style=\"position: absolute; top:10px;\">Box</div>` ,
-      fixed: `Fixed\nSyntax: position: fixed; bottom:0; left:0;\nUse Case: Navbars, footers always visible.\nExample: <div style=\"position: fixed; bottom:0;\">Box</div>` ,
-      sticky: `Sticky\nSyntax: position: sticky; top:0;\nUse Case: Headers that stick while scrolling.\nExample: <div style=\"position: sticky; top:0;\">Header</div>`
-    };
+    function resetAll() {
+      demoBox.style.position = 'static';
+      demoBox.style.top = demoBox.style.left = '0px';
+      placeholder.style.display = 'none';
+      stickyArea.style.display = 'none';
+      parentArea.style.display = 'none';
+      document.getElementById('playArea').style.display = 'block';
+    }
 
-    document.getElementById('applyBtn').addEventListener('click', () => {
-      const pos = positionSelect.value;
-      target.style.position = pos;
-      target.style.top = topRange.value + 'px';
-      target.style.left = leftRange.value + 'px';
-      feedback.textContent = `Applied position: ${pos}`;
-    });
+    function setMode(mode) {
+      resetAll();
+      currentMode = mode;
+      if (mode === 'static') {
+        notes.innerHTML = "<h2>Static Positioning</h2><p><b>Definition:</b> Default positioning, elements stay in document flow.</p><p><b>Syntax:</b> position: static;</p><p><b>Use Case:</b> Normal layouts without manual offsets.</p>";
+        demoBox.className = "demo-box static";
+      }
+      else if (mode === 'relative') {
+        demoBox.style.position = 'relative';
+        placeholder.style.display = 'block';
+        placeholder.style.top = demoBox.offsetTop + 'px';
+        placeholder.style.left = demoBox.offsetLeft + 'px';
+        notes.innerHTML = "<h2>Relative Positioning</h2><p><b>Definition:</b> Moves element relative to its original spot, leaves ghost space.</p><p><b>Syntax:</b> position: relative; top: 20px; left: 30px;</p><p><b>Use Case:</b> Small nudges or reference for absolute children.</p>";
+        demoBox.className = "demo-box relative";
+      }
+      else if (mode === 'absolute') {
+        demoBox.style.position = 'absolute';
+        notes.innerHTML = "<h2>Absolute Positioning</h2><p><b>Definition:</b> Removes element from flow, positions relative to <html> if no parent.</p><p><b>Syntax:</b> position: absolute; top: 50px; left: 30px;</p><p><b>Use Case:</b> Tooltips, floating boxes.</p>";
+        demoBox.className = "demo-box absolute";
+      }
+      else if (mode === 'absoluteParent') {
+        parentArea.style.display = 'block';
+        childBox.style.position = 'absolute';
+        notes.innerHTML = "<h2>Absolute with Parent</h2><p><b>Definition:</b> Positions element relative to nearest positioned ancestor (here parent).</p><p><b>Syntax:</b> parent { position: relative; } child { position: absolute; top:20px; left:20px; }</p><p><b>Use Case:</b> Placing child inside container like badges.</p>";
+        childBox.className = "demo-box absolute-parent";
+      }
+      else if (mode === 'fixed') {
+        demoBox.style.position = 'fixed';
+        notes.innerHTML = "<h2>Fixed Positioning</h2><p><b>Definition:</b> Sticks element to viewport, doesn’t move on scroll.</p><p><b>Syntax:</b> position: fixed; bottom:0; left:0;</p><p><b>Use Case:</b> Navbars, sticky footers.</p>";
+        demoBox.className = "demo-box fixed";
+      }
+      else if (mode === 'sticky') {
+        stickyArea.style.display = 'block';
+        stickyBox.style.position = 'sticky';
+        stickyBox.style.top = '20px';
+        notes.innerHTML = "<h2>Sticky Positioning</h2><p><b>Definition:</b> Behaves like relative until scroll threshold, then sticks at offset.</p><p><b>Syntax:</b> position: sticky; top:30px;</p><p><b>Use Case:</b> Section headers, scroll navbars.</p>";
+        stickyBox.className = "demo-box sticky";
+      }
+      
+      // Reset offsets when changing mode
+      document.getElementById('topVal').value = '0px';
+      document.getElementById('leftVal').value = '0px';
+    }
 
-    document.getElementById('resetBtn').addEventListener('click', () => {
-      target.style.position = 'static';
-      target.style.top = '';
-      target.style.left = '';
-      feedback.textContent = 'Reset to default (static).';
-    });
-
-    document.getElementById('hintBtn').addEventListener('click', () => {
-      const pos = positionSelect.value;
-      hintText.style.display = hintText.style.display === 'block' ? 'none' : 'block';
-      hintText.textContent = notes[pos];
-    });
+    function applyOffsets() {
+      const topVal = document.getElementById('topVal').value;
+      const leftVal = document.getElementById('leftVal').value;
+      if (currentMode === 'sticky') {
+        stickyBox.style.top = topVal;
+        stickyBox.style.left = leftVal;
+      } else if (currentMode === 'absoluteParent') {
+        childBox.style.top = topVal;
+        childBox.style.left = leftVal;
+      } else {
+        demoBox.style.top = topVal;
+        demoBox.style.left = leftVal;
+      }
+    }
   </script>
 </body>
 </html>

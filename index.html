@@ -11,23 +11,23 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       display: flex;
       height: 100vh;
-      background-color: #f0f2f5; /* Light gray background */
-      color: #333; /* Darker text for readability */
+      background-color: #f0f2f5;
+      color: #333;
     }
 
     /* Panels Layout & Styling */
     .notes-panel {
       width: 40%;
-      background: #1a1a2e; /* Darker background for contrast */
-      color: #e0e0e0; /* Lighter text for the dark panel */
+      background: #1a1a2e;
+      color: #e0e0e0;
       padding: 20px;
       overflow-y: auto;
       box-sizing: border-box;
-      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     }
 
     .notes-panel h2 {
-        color: #64ffda; /* A highlight color for the heading */
+        color: #64ffda;
     }
 
     .playground {
@@ -36,111 +36,123 @@
       flex-direction: column;
       padding: 20px;
       box-sizing: border-box;
-      background: #ffffff; /* White background for the playground */
+      background: #ffffff;
     }
 
     /* Controls Styling */
     .controls {
       display: flex;
       flex-wrap: wrap;
-      gap: 12px; /* Increased gap for better spacing */
-      margin-bottom: 20px; /* More space below controls */
+      gap: 12px;
+      margin-bottom: 20px;
     }
 
     .controls button, .controls input {
-      padding: 10px 15px; /* Bigger buttons */
+      padding: 10px 15px;
       border: none;
-      border-radius: 8px; /* Softer rounded corners */
+      border-radius: 8px;
       cursor: pointer;
-      font-weight: 600; /* Slightly bolder font */
-      transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth hover effects */
+      font-weight: 600;
+      transition: background-color 0.3s ease, transform 0.2s ease;
     }
 
     .controls button {
-      background-color: #4CAF50; /* Green button */
+      background-color: #4CAF50;
       color: white;
     }
 
     .controls button:hover {
-      background-color: #45a049; /* Darker green on hover */
-      transform: translateY(-2px); /* Slight lift effect */
+      background-color: #45a049;
+      transform: translateY(-2px);
     }
 
     .controls input {
-      padding: 8px; /* Adjusted padding for inputs */
-      width: 80px; /* Slightly wider input boxes */
-      border: 1px solid #ccc; /* A subtle border */
+      padding: 8px;
+      width: 80px;
+      border: 1px solid #ccc;
       border-radius: 6px;
     }
 
     /* Demo Area Styling */
     .area, .parent-container, .scroll-area {
       flex: 1;
-      border: 1px solid #ddd; /* Lighter, more modern border */
+      border: 1px solid #ddd;
       border-radius: 10px;
       position: relative;
-      overflow: hidden; /* Hide anything that overflows */
+      overflow: hidden;
       padding: 20px;
-      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05); /* Subtle inner shadow */
+      box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
     }
-    
+
     .scroll-area {
-        overflow-y: auto; /* Re-enabled for scrolling */
+        overflow-y: auto;
         height: 300px;
     }
 
     /* Demo Boxes Styling */
     .demo-box {
-      width: 120px; /* Slightly larger boxes */
+      width: 120px;
       height: 120px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #fff;
       font-weight: bold;
-      border-radius: 10px; /* Rounded corners for the boxes */
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Drop shadow for depth */
-      transition: transform 0.3s ease; /* Smooth transition for movements */
+      border-radius: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: top 0.3s ease, left 0.3s ease;
     }
 
     .demo-box:hover {
-        transform: scale(1.05); /* Slight zoom on hover */
+        transform: scale(1.05);
     }
 
-    .static { background: #607d8b; } /* Slate gray */
-    .relative { background: #ff9800; } /* Amber */
-    .absolute { background: #9c27b0; } /* Deep purple */
-    .fixed { background: #f44336; } /* Red */
-    .sticky { background: #03a9f4; color: white; } /* Light blue */
-    .absolute-parent { background: #8bc34a; } /* Light green */
+    .static { background: #607d8b; }
+    .relative { background: #ff9800; }
+    .absolute { background: #9c27b0; }
+    .fixed { background: #f44336; }
+    .sticky { background: #03a9f4; color: white; }
+    .absolute-parent { background: #8bc34a; }
 
+    /* The Correct Placeholder Styling */
     .placeholder {
       border: 2px dashed #999;
       background-color: rgba(255, 255, 255, 0.5);
       border-radius: 10px;
+      width: 120px;
+      height: 120px;
+      position: absolute;
+      top: 20px; /* Aligned with parent's padding */
+      left: 20px; /* Aligned with parent's padding */
+      pointer-events: none;
+      z-index: 0;
+      display: none;
+    }
+    
+    .demo-box.relative {
+        z-index: 1;
     }
 
     .small-content, .big-content {
-      /* Added to support the sticky demo, but with some style */
       background: #f8f8f8;
       border-radius: 5px;
       padding: 10px;
       margin-bottom: 20px;
       border: 1px dashed #ccc;
     }
-    
+
     .big-content {
-        height: 800px; /* Reduced to 800px for a better demo */
+        height: 800px;
     }
 
     .parent-container {
       position: relative;
       border: 2px solid #ccc;
-      height: 250px; /* Increased height for better visibility */
+      height: 250px;
       margin-top: 20px;
       background: #e9e9f1;
     }
-    
+
   </style>
 </head>
 <body>
@@ -163,7 +175,7 @@
     </div>
     <div class="area" id="playArea">
       <div class="demo-box static" id="demoBox">Box</div>
-      <div class="placeholder" id="placeholder" style="display:none;"></div>
+      <div class="placeholder" id="placeholder"></div>
     </div>
     <div class="scroll-area" id="stickyArea" style="display:none;">
       <div class="small-content">Scroll down to see the sticky box in action!</div>
@@ -186,26 +198,32 @@
     const notes = document.getElementById('notes');
 
     function resetAll() {
-      demoBox.style.position = 'static';
-      demoBox.style.top = demoBox.style.left = '0px';
-      placeholder.style.display = 'none';
+      // Hide all demo areas first
+      document.getElementById('playArea').style.display = 'block';
       stickyArea.style.display = 'none';
       parentArea.style.display = 'none';
-      document.getElementById('playArea').style.display = 'block';
+      
+      // Reset styles on demoBox
+      demoBox.style.position = 'static';
+      demoBox.style.top = demoBox.style.left = '0px';
+      
+      // Hide placeholder
+      placeholder.style.display = 'none';
     }
 
     function setMode(mode) {
       resetAll();
       currentMode = mode;
+
       if (mode === 'static') {
         notes.innerHTML = "<h2>Static Positioning</h2><p><b>Definition:</b> Default positioning, elements stay in document flow.</p><p><b>Syntax:</b> position: static;</p><p><b>Use Case:</b> Normal layouts without manual offsets.</p>";
         demoBox.className = "demo-box static";
       }
       else if (mode === 'relative') {
         demoBox.style.position = 'relative';
+        demoBox.style.top = '0px';
+        demoBox.style.left = '0px';
         placeholder.style.display = 'block';
-        placeholder.style.top = demoBox.offsetTop + 'px';
-        placeholder.style.left = demoBox.offsetLeft + 'px';
         notes.innerHTML = "<h2>Relative Positioning</h2><p><b>Definition:</b> Moves element relative to its original spot, leaves ghost space.</p><p><b>Syntax:</b> position: relative; top: 20px; left: 30px;</p><p><b>Use Case:</b> Small nudges or reference for absolute children.</p>";
         demoBox.className = "demo-box relative";
       }
@@ -216,6 +234,7 @@
       }
       else if (mode === 'absoluteParent') {
         parentArea.style.display = 'block';
+        document.getElementById('playArea').style.display = 'none';
         childBox.style.position = 'absolute';
         notes.innerHTML = "<h2>Absolute with Parent</h2><p><b>Definition:</b> Positions element relative to nearest positioned ancestor (here parent).</p><p><b>Syntax:</b> parent { position: relative; } child { position: absolute; top:20px; left:20px; }</p><p><b>Use Case:</b> Placing child inside container like badges.</p>";
         childBox.className = "demo-box absolute-parent";
@@ -227,13 +246,13 @@
       }
       else if (mode === 'sticky') {
         stickyArea.style.display = 'block';
+        document.getElementById('playArea').style.display = 'none';
         stickyBox.style.position = 'sticky';
         stickyBox.style.top = '20px';
         notes.innerHTML = "<h2>Sticky Positioning</h2><p><b>Definition:</b> Behaves like relative until scroll threshold, then sticks at offset.</p><p><b>Syntax:</b> position: sticky; top:30px;</p><p><b>Use Case:</b> Section headers, scroll navbars.</p>";
         stickyBox.className = "demo-box sticky";
       }
-      
-      // Reset offsets when changing mode
+
       document.getElementById('topVal').value = '0px';
       document.getElementById('leftVal').value = '0px';
     }

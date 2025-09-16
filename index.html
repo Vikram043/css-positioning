@@ -88,7 +88,17 @@
         overflow-y: auto;
         height: 300px;
     }
-
+    
+    /* New dedicated container for absolute without parent */
+    .absolute-container {
+        flex: 1;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
+        display: none;
+    }
+    
     /* Demo Boxes Styling */
     .demo-box {
       width: 120px;
@@ -100,7 +110,7 @@
       font-weight: bold;
       border-radius: 10px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      transition: top 0.3s ease, left 0.3s ease;
+      transition: top 0.3s ease, left 0.3s ease, transform 0.3s ease;
     }
 
     .demo-box:hover {
@@ -122,14 +132,15 @@
       width: 120px;
       height: 120px;
       position: absolute;
-      top: 20px; /* Aligned with parent's padding */
-      left: 20px; /* Aligned with parent's padding */
+      top: 20px;
+      left: 20px;
       pointer-events: none;
       z-index: 0;
       display: none;
     }
-    
+
     .demo-box.relative {
+        position: relative;
         z-index: 1;
     }
 
@@ -173,15 +184,22 @@
       <label>Left: <input type="text" id="leftVal" value="0px"></label>
       <button onclick="applyOffsets()">Apply</button>
     </div>
+    
     <div class="area" id="playArea">
-      <div class="demo-box static" id="demoBox">Box</div>
-      <div class="placeholder" id="placeholder"></div>
+        <div class="demo-box static" id="demoBox">Box</div>
+        <div class="placeholder" id="placeholder"></div>
     </div>
+    
+    <div class="absolute-container" id="absoluteArea">
+        <div class="demo-box" id="absoluteBox">Box</div>
+    </div>
+    
     <div class="scroll-area" id="stickyArea" style="display:none;">
       <div class="small-content">Scroll down to see the sticky box in action!</div>
       <div class="demo-box sticky" id="stickyBox">Sticky</div>
       <div class="big-content"></div>
     </div>
+    
     <div class="parent-container" id="parentArea" style="display:none;">
       <div class="demo-box absolute-parent" id="childBox">Child</div>
     </div>
@@ -190,31 +208,35 @@
   <script>
     let currentMode = 'static';
     const demoBox = document.getElementById('demoBox');
+    const absoluteBox = document.getElementById('absoluteBox');
     const placeholder = document.getElementById('placeholder');
     const stickyArea = document.getElementById('stickyArea');
     const stickyBox = document.getElementById('stickyBox');
     const parentArea = document.getElementById('parentArea');
     const childBox = document.getElementById('childBox');
     const notes = document.getElementById('notes');
+    const playArea = document.getElementById('playArea');
+    const absoluteArea = document.getElementById('absoluteArea');
 
     function resetAll() {
-      // Hide all demo areas first
-      document.getElementById('playArea').style.display = 'block';
+      playArea.style.display = 'block';
+      absoluteArea.style.display = 'none';
       stickyArea.style.display = 'none';
       parentArea.style.display = 'none';
       
-      // Reset styles on demoBox
       demoBox.style.position = 'static';
       demoBox.style.top = demoBox.style.left = '0px';
       
-      // Hide placeholder
+      absoluteBox.style.position = 'static';
+      absoluteBox.style.top = absoluteBox.style.left = '0px';
+
       placeholder.style.display = 'none';
     }
 
     function setMode(mode) {
       resetAll();
       currentMode = mode;
-
+      
       if (mode === 'static') {
         notes.innerHTML = "<h2>Static Positioning</h2><p><b>Definition:</b> Default positioning, elements stay in document flow.</p><p><b>Syntax:</b> position: static;</p><p><b>Use Case:</b> Normal layouts without manual offsets.</p>";
         demoBox.className = "demo-box static";
@@ -228,25 +250,26 @@
         demoBox.className = "demo-box relative";
       }
       else if (mode === 'absolute') {
-        demoBox.style.position = 'absolute';
+        playArea.style.display = 'none';
+        absoluteArea.style.display = 'block';
+        absoluteBox.style.position = 'absolute';
         notes.innerHTML = "<h2>Absolute Positioning</h2><p><b>Definition:</b> Removes element from flow, positions relative to <html> if no parent.</p><p><b>Syntax:</b> position: absolute; top: 50px; left: 30px;</p><p><b>Use Case:</b> Tooltips, floating boxes.</p>";
-        demoBox.className = "demo-box absolute";
+        absoluteBox.className = "demo-box absolute";
       }
       else if (mode === 'absoluteParent') {
+        playArea.style.display = 'none';
         parentArea.style.display = 'block';
-        document.getElementById('playArea').style.display = 'none';
         childBox.style.position = 'absolute';
         notes.innerHTML = "<h2>Absolute with Parent</h2><p><b>Definition:</b> Positions element relative to nearest positioned ancestor (here parent).</p><p><b>Syntax:</b> parent { position: relative; } child { position: absolute; top:20px; left:20px; }</p><p><b>Use Case:</b> Placing child inside container like badges.</p>";
         childBox.className = "demo-box absolute-parent";
       }
       else if (mode === 'fixed') {
-        demoBox.style.position = 'fixed';
         notes.innerHTML = "<h2>Fixed Positioning</h2><p><b>Definition:</b> Sticks element to viewport, doesn’t move on scroll.</p><p><b>Syntax:</b> position: fixed; bottom:0; left:0;</p><p><b>Use Case:</b> Navbars, sticky footers.</p>";
         demoBox.className = "demo-box fixed";
       }
       else if (mode === 'sticky') {
         stickyArea.style.display = 'block';
-        document.getElementById('playArea').style.display = 'none';
+        playArea.style.display = 'none';
         stickyBox.style.position = 'sticky';
         stickyBox.style.top = '20px';
         notes.innerHTML = "<h2>Sticky Positioning</h2><p><b>Definition:</b> Behaves like relative until scroll threshold, then sticks at offset.</p><p><b>Syntax:</b> position: sticky; top:30px;</p><p><b>Use Case:</b> Section headers, scroll navbars.</p>";
@@ -266,6 +289,9 @@
       } else if (currentMode === 'absoluteParent') {
         childBox.style.top = topVal;
         childBox.style.left = leftVal;
+      } else if (currentMode === 'absolute') {
+        absoluteBox.style.top = topVal;
+        absoluteBox.style.left = leftVal;
       } else {
         demoBox.style.top = topVal;
         demoBox.style.left = leftVal;
